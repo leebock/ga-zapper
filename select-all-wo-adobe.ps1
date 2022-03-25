@@ -1,4 +1,4 @@
-param ([Parameter(Mandatory)]$Input_File, [Parameter(Mandatory)]$Output_File)
+param ([Parameter(Mandatory)]$Input_File, [Parameter(Mandatory)]$Pattern)
 
 Get-Content $Input_File | 
-Where-Object {(Select-String -Path $_ -Pattern "mtags.esri.com" -Quiet) -eq $false} > $Output_File
+Where-Object {(Select-String -Path $_ -Pattern $Pattern -Quiet) -eq $false}
