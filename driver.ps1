@@ -9,7 +9,7 @@ $CreateBackup = $false
 
 Write-Host("Searching for files that contain Google Analytics...")
 
-.\find-all-w-ga.ps1 `
+.\Find-Files-With-Content-Pattern `
     -Path $Path `
     -FileName "index.html" `
     -Pattern "<!--Google Analytics Start-->" > $TextFile_Files_With_GA
