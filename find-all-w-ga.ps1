@@ -1,5 +1,9 @@
-param ([Parameter(Mandatory)]$Path)
+param (
+    [Parameter(Mandatory)]$Path, 
+    [Parameter(Mandatory)]$FileName, 
+    [Parameter(Mandatory)]$Pattern
+    )
 
-Get-ChildItem -Path $Path -Recurse -Include index.html  | 
-Select-String -Pattern "<!--Google Analytics Start-->" | 
+Get-ChildItem -Path $Path -Recurse -Include $FileName  | 
+Select-String -Pattern $Pattern | 
 ForEach-Object Path

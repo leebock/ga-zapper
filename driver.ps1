@@ -9,7 +9,10 @@ $CreateBackup = $false
 
 Write-Host("Searching for files that contain Google Analytics...")
 
-.\find-all-w-ga.ps1 -Path $Path > $TextFile_Files_With_GA
+.\find-all-w-ga.ps1 `
+    -Path $Path `
+    -FileName "index.html" `
+    -Pattern "<!--Google Analytics Start-->" > $TextFile_Files_With_GA
 
 #remove mysteriously occuring blank lines
 (Get-Content $TextFile_Files_With_GA) | 
