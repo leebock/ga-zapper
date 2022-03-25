@@ -38,7 +38,7 @@ if ($CreateBackup) {
 
 Write-Host("Filtering for files that don't have Adobe Analytics...")
 
-.\select-all-wo-adobe.ps1 `
+.\Filter-Files-by-Content-Pattern `
     -Input_File $TextFile_Files_With_GA `
     -Pattern "mtags.esri.com" > $TextFile_Files_Without_Adobe 
 
