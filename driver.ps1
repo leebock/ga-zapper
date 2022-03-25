@@ -48,19 +48,27 @@ $measure = Get-Content $TextFile_Files_Without_Adobe | Measure-Object -Line
 
 Write-Host("Found "+$measure.Lines+" files that DON'T contain Adobe Analytics.")
 
-
 #***********************************************************
 #************ For non Adobe files, insert Adobe ************
 #***********************************************************
 
-
 foreach($line in (Get-Content $TextFile_Files_Without_Adobe)) {
-    Write-Host($line)
     $content = Get-Content -path $line -Raw
     $replacement = '<!--Google Analytics End-->'+"`r`n"+"`r`n"+ 
     '<!-- Adobe Analytics Start-->'+"`r`n"+
     '<script src="'+"//mtags.esri.com/tags.js"+'"></script>'+"`r`n"+
     '<!-- Adobe Analytics End-->'
     $content = $content -replace "<!--Google Analytics End-->", $replacement
+    Set-Content -Path $line -Value $content
+}
+
+#***********************************************************
+#************** Zap Google Analytics section ***************
+#***********************************************************
+
+foreach($line in (Get-Content $TextFile_Files_With_GA)) {
+    $content = Get-Content -path $line -Raw
+    $Pattern = '(?s)(?<=<!--Google Analytics Start-->\r?\n).*?(?=<!--Google Analytics End-->)'
+    $content = $content -replace $Pattern, ""
     Set-Content -Path $line -Value $content
 }
