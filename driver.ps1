@@ -1,6 +1,6 @@
 $Path = "C:\Lee\repos\primary\tornado-dashboard"
-$TextFile_Files_With_GA = "..\data\files-w-ga.txt"
-$TextFile_Files_Without_Adobe = "..\data\files-wo-adobe.txt"
+$List_Files_With_GA = "..\data\files-w-ga.txt"
+$List_Files_Without_Adobe = "..\data\files-wo-adobe.txt"
 $CreateBackup = $false
 
 #***********************************************************
@@ -12,14 +12,14 @@ Write-Host("Searching for files that contain Google Analytics...")
 .\Find-Files-With-Content-Pattern `
     -Path $Path `
     -FileName "index.html" `
-    -Pattern "<!--Google Analytics Start-->" > $TextFile_Files_With_GA
+    -Pattern "<!--Google Analytics Start-->" > $List_Files_With_GA
 
 #remove mysteriously occuring blank lines
-(Get-Content $TextFile_Files_With_GA) | 
+(Get-Content $List_Files_With_GA) | 
 Where-Object {$_.trim() -ne "" } | 
-Set-Content $TextFile_Files_With_GA
+Set-Content $List_Files_With_GA
 
-$measure = Get-Content $TextFile_Files_With_GA | Measure-Object -Line
+$measure = Get-Content $List_Files_With_GA | Measure-Object -Line
 
 Write-Host("Found "+$measure.Lines+" files that contain Google Analytics.")
 
@@ -29,7 +29,7 @@ Write-Host("Found "+$measure.Lines+" files that contain Google Analytics.")
 
 if ($CreateBackup) {
     Write-Host("Creating backup files...")
-    .\create-backups.ps1 -Input_File $TextFile_Files_With_GA    
+    .\create-backups.ps1 -Input_File $List_Files_With_GA    
 }
 
 #***********************************************************
@@ -39,15 +39,15 @@ if ($CreateBackup) {
 Write-Host("Filtering for files that don't have Adobe Analytics...")
 
 .\Filter-Files-by-Content-Pattern `
-    -Input_File $TextFile_Files_With_GA `
-    -Pattern "mtags.esri.com" > $TextFile_Files_Without_Adobe 
+    -Input_File $List_Files_With_GA `
+    -Pattern "mtags.esri.com" > $List_Files_Without_Adobe 
 
 #remove mysteriously occuring blank lines
-(Get-Content $TextFile_Files_Without_Adobe) | 
+(Get-Content $List_Files_Without_Adobe) | 
 Where-Object {$_.trim() -ne "" } | 
-Set-Content $TextFile_Files_Without_Adobe
+Set-Content $List_Files_Without_Adobe
 
-$measure = Get-Content $TextFile_Files_Without_Adobe | Measure-Object -Line 
+$measure = Get-Content $List_Files_Without_Adobe | Measure-Object -Line 
 
 Write-Host("Found "+$measure.Lines+" files that DON'T contain Adobe Analytics.")
 
@@ -55,7 +55,7 @@ Write-Host("Found "+$measure.Lines+" files that DON'T contain Adobe Analytics.")
 #************ For non Adobe files, insert Adobe ************
 #***********************************************************
 
-foreach($line in (Get-Content $TextFile_Files_Without_Adobe)) {
+foreach($line in (Get-Content $List_Files_Without_Adobe)) {
     $content = Get-Content -path $line -Raw
     $replacement = '<!--Google Analytics End-->'+"`r`n"+"`r`n"+ 
     '<!-- Adobe Analytics Start-->'+"`r`n"+
@@ -69,7 +69,7 @@ foreach($line in (Get-Content $TextFile_Files_Without_Adobe)) {
 #************** Zap Google Analytics section ***************
 #***********************************************************
 
-foreach($line in (Get-Content $TextFile_Files_With_GA)) {
+foreach($line in (Get-Content $List_Files_With_GA)) {
     $content = Get-Content -path $line -Raw
     $Pattern = '(?s)(?<=<!--Google Analytics Start-->\r?\n).*?(?=<!--Google Analytics End-->)'
     $content = $content -replace $Pattern, ""
